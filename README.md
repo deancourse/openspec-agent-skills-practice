@@ -43,6 +43,12 @@ npm run migrate
 npm run seed:admin
 ```
 
+如果你想直接建立一組可模擬多角色情境的帳號，也可以執行：
+
+```bash
+npm run seed:demo-users
+```
+
 6. 啟動後端：
 
 ```bash
@@ -134,6 +140,7 @@ npm run dev:db
 npm run dev:db:stop
 npm run migrate
 npm run seed:admin
+npm run seed:demo-users
 npm run dev:backend
 npm run dev:frontend
 ```
@@ -156,5 +163,29 @@ npm run dev:frontend
 - `SEED_ADMIN_EMAIL`
 - `SEED_ADMIN_PASSWORD`
 - `SEED_ADMIN_NAME`
+- `SEED_DEMO_ADMIN_EMAIL`
+- `SEED_DEMO_PASSWORD`
 
 更完整的補充可參考 [docs/setup.md](/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/docs/setup.md)。
+
+## Demo 情境帳號
+
+執行以下指令後：
+
+```bash
+npm run seed:demo-users
+```
+
+系統會建立一組可重複執行、適合測試權限與簽核流程的帳號，預設密碼皆為 `Demo123!`：
+
+- `admin.demo@example.com`：管理者，可建立帳號、調整政策、審核補登
+- `manager.alice@example.com`：主管，可檢視自己與下屬資料、審核請假與加班
+- `manager.bob@example.com`：主管，可作為另一條簽核鏈與代理人
+- `employee.emma@example.com`：員工，簽核人為 Alice，代理人為 Bob
+- `employee.noah@example.com`：員工，簽核人為 Alice，代理人為 Bob
+- `employee.olivia@example.com`：員工，簽核人為 Bob，代理人為 Alice
+
+如果要調整 demo 帳號的共用密碼或管理者信箱，可以在 `.env` 覆寫：
+
+- `SEED_DEMO_PASSWORD`
+- `SEED_DEMO_ADMIN_EMAIL`

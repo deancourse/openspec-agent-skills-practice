@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
 
-dotenv.config();
+dotenv.config({
+  path: fileURLToPath(new URL("../../../.env", import.meta.url))
+});
 
 function parseAllowedOrigins() {
   const configured = process.env.FRONTEND_URLS ?? process.env.FRONTEND_URL;

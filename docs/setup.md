@@ -78,6 +78,7 @@ npm run dev:db:stop
 ```bash
 npm run migrate
 npm run seed:admin
+npm run seed:demo-users
 npm run dev:backend
 ```
 
@@ -85,6 +86,7 @@ npm run dev:backend
 
 - `npm run migrate`：建立或更新資料表
 - `npm run seed:admin`：建立第一個管理者帳號
+- `npm run seed:demo-users`：建立一組可直接模擬 admin / manager / employee 情境的測試帳號
 - `npm run dev:backend`：啟動本機後端開發伺服器
 - 若 `.env` 的 `SMTP_HOST=mailhog`，本機開發會使用 mock email delivery，方便直接驗證密碼設定流程
 
@@ -126,6 +128,8 @@ npm run seed:admin
 - `SEED_ADMIN_EMAIL`
 - `SEED_ADMIN_PASSWORD`
 - `SEED_ADMIN_NAME`
+- `SEED_DEMO_ADMIN_EMAIL`
+- `SEED_DEMO_PASSWORD`
 
 ## pgAdmin 登入資訊
 
@@ -167,3 +171,22 @@ http://localhost:5050
 - 系統目前支援 `admin`、`manager`、`employee` 三種角色。
 - 補休與加班的自動換算目前保留擴充空間，尚未完全自動化。
 - 若要正式測試寄信功能，還需要提供可用的 SMTP 服務。
+
+## Demo 情境帳號
+
+執行：
+
+```bash
+npm run seed:demo-users
+```
+
+預設會建立以下帳號，且可重複執行更新資料：
+
+- `admin.demo@example.com`：管理者
+- `manager.alice@example.com`：主管
+- `manager.bob@example.com`：主管
+- `employee.emma@example.com`：員工，簽核人 Alice，代理人 Bob
+- `employee.noah@example.com`：員工，簽核人 Alice，代理人 Bob
+- `employee.olivia@example.com`：員工，簽核人 Bob，代理人 Alice
+
+這組 demo 帳號預設密碼皆為 `Demo123!`，可在 `.env` 透過 `SEED_DEMO_PASSWORD` 覆寫；demo 管理者信箱可用 `SEED_DEMO_ADMIN_EMAIL` 覆寫。

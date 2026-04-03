@@ -12,6 +12,7 @@
     "dev:frontend": "npm run dev --workspace frontend",
     "migrate": "npm run migrate --workspace backend",
     "seed:admin": "npm run seed:admin --workspace backend",
+    "seed:demo-users": "npm run seed:demo-users --workspace backend",
     "lint": "npm run lint --workspace frontend && npm run lint --workspace backend",
     "test": "npm run test --workspace backend"
   }
