@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "createdAt": "2026-04-03T13:12:52.153Z",
+  "scope": "project",
+  "operation": "change-to-agents",
+  "entries": [
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.claude/commands",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.codex/prompts",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.cursor/commands",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.agent/workflows",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.claude/hooks",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.claude/skills",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.codex/skills",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.cursor/skills",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/lindingyuan/Documents/external_project/openspec-agent-skills-practice/.agent/skills",
+      "kind": "symlink",
+      "action": "create"
+    }
+  ]
+}

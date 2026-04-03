@@ -1,0 +1,60 @@
+schema: spec-driven
+
+context: |
+  Product: attendance management system MVP for attendance, leave, overtime, approvals, and admin-managed user onboarding.
+
+  Repo shape:
+  - Workspace monorepo with `frontend` and `backend`
+  - OpenSpec artifacts live in `openspec/`
+  - Frontend and backend are separate apps; PostgreSQL and pgAdmin run via Docker Compose
+
+  Tech stack:
+  - Frontend: React 18, Vite 5, React Router 6, plain JavaScript
+  - Backend: Node.js ESM, Express 4, pg, jsonwebtoken, bcryptjs, nodemailer, dotenv
+  - Database: PostgreSQL 16 with raw SQL migrations in `backend/src/db/migrations`
+  - Tests: backend uses `node:test`; workflow-style integration tests hit real HTTP endpoints
+
+  Current architecture conventions:
+  - Frontend API calls are centralized in `frontend/src/api.js`; avoid proposing page-local fetch patterns
+  - Frontend auth state lives in `frontend/src/context/AuthContext.jsx`
+  - Frontend uses page-level local state with `useState` and `useEffect`; there is no Redux, Zustand, or React Query
+  - Backend routes live in `backend/src/routes/index.js`
+  - Backend business rules belong in `backend/src/modules/*/service.js`
+  - Database access uses parameterized SQL; no ORM is used
+  - Expected backend error shape is `{ error: string }`
+  - Role model is `admin`, `manager`, `employee`
+
+  Domain rules already implemented:
+  - Attendance stores immutable clock events and derives daily summaries from first clock-in and last clock-out
+  - Attendance lateness is evaluated against a global `attendance_policy`
+  - Leave requests require a delegate and validate annual/compensatory balance before submission
+  - Overtime approvals do not yet auto-credit compensatory leave
+  - New users receive one-time password setup links by email
+
+  Documentation / writing conventions:
+  - Keep artifacts MVP-scoped and implementation-aware
+  - Prefer concrete repository-aligned terminology over generic platform language
+  - Call out open policy questions instead of inventing rules
+  - Do not assume TypeScript, microservices, cloud infra, or advanced HR policies that do not exist in the repo today
+
+rules:
+  proposal:
+    - Keep the proposal tightly scoped to a single change or coherent feature slice
+    - Include clear goals, non-goals, and impact on existing attendance/leave/overtime/admin flows when relevant
+    - Reference real project boundaries such as React frontend, Express backend, PostgreSQL, and Docker-based local runtime
+    - Surface open policy decisions explicitly instead of silently choosing one
+  design:
+    - Align decisions with the current modular monolith architecture and raw SQL data layer
+    - Prefer extending existing modules over introducing new frameworks or major architectural shifts unless the change truly requires it
+    - Note affected backend module(s), frontend page(s), DB tables/migrations, and auth/role implications
+    - Call out risks when a change touches approval logic, onboarding email flow, attendance policy, or DB-backed workflows
+  tasks:
+    - Break work into small sequential tasks that map to real repo areas such as frontend, backend, migrations, tests, and docs
+    - Include verification tasks whenever behavior, schema, or access control changes
+    - Prefer implementation-oriented tasks over vague coordination tasks
+    - Keep tasks concrete enough that each item could be completed in one focused coding session
+  spec:
+    - Write requirements in terms of observable system behavior, using SHALL language and scenario-based acceptance criteria
+    - Stay consistent with current domain vocabulary: attendance, leave, overtime, approver, delegate, password setup, administrator, manager, employee
+    - Preserve MVP simplicity unless the change explicitly expands policy complexity
+    - Mark uncertain business rules as open questions or follow-up changes, not hidden assumptions

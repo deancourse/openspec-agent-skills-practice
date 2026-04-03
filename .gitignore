@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+dist/
+frontend/dist/
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+
+# Local container / runtime data
+pgadmin-data/
+backend/data/
+
+# Local editor / agent metadata
+.agent/
+.claude/
+.codex/
+.cursor/
+
+# OpenSpec artifacts should stay in version control
+!openspec/
+!openspec/**

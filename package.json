@@ -1,0 +1,18 @@
+{
+  "name": "attendance-management-system",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:db": "docker compose up -d postgres pgadmin",
+    "dev:db:stop": "docker compose stop postgres pgadmin",
+    "dev:backend": "npm run migrate --workspace backend && npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "migrate": "npm run migrate --workspace backend",
+    "seed:admin": "npm run seed:admin --workspace backend",
+    "lint": "npm run lint --workspace frontend && npm run lint --workspace backend",
+    "test": "npm run test --workspace backend"
+  }
+}
