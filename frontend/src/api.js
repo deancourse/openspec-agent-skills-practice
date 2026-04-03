@@ -70,6 +70,19 @@ export const api = {
     }),
   attendance: (token, userId) =>
     request(`/attendance${userId ? `?userId=${userId}` : ""}`, { token }),
+  attendanceAdjustments: (token) => request("/attendance/adjustments", { token }),
+  submitAttendanceAdjustment: (token, body) =>
+    request("/attendance/adjustments", {
+      method: "POST",
+      token,
+      body: JSON.stringify(body)
+    }),
+  decideAttendanceAdjustment: (token, requestId, body) =>
+    request(`/attendance/adjustments/${requestId}/decision`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(body)
+    }),
   attendancePolicy: (token) => request("/attendance/policy", { token }),
   updateAttendancePolicy: (token, body) =>
     request("/attendance/policy", {

@@ -14,8 +14,11 @@ import { issueSetupLink } from "../modules/auth/service.js";
 import {
   clockIn,
   clockOut,
+  decideMissedPunchRequest,
   getAttendancePolicy,
   listAttendance,
+  listMissedPunchRequests,
+  submitMissedPunchRequest,
   updateAttendancePolicy
 } from "../modules/attendance/service.js";
 import {
@@ -182,7 +185,11 @@ router.patch(
     const policy = await updateAttendancePolicy({
       workStartTime: req.body.workStartTime,
       workEndTime: req.body.workEndTime,
-      graceMinutes: Number(req.body.graceMinutes ?? 0)
+      graceMinutes: Number(req.body.graceMinutes ?? 0),
+      missedPunchSubmissionDays: Number(req.body.missedPunchSubmissionDays ?? 3),
+      missedPunchRequiresApproval: req.body.missedPunchRequiresApproval ?? true,
+      missedPunchAutoApproveQuota: Number(req.body.missedPunchAutoApproveQuota ?? 1),
+      missedPunchAllowAdminOverride: req.body.missedPunchAllowAdminOverride ?? true
     });
     res.json(policy);
   })
@@ -203,6 +210,50 @@ router.get(
   asyncHandler(async (req, res) => {
     const records = await listAttendance(req.user, req.query.userId ?? null);
     res.json(records);
+  })
+);
+
+router.get(
+  "/attendance/adjustments",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const requests = await listMissedPunchRequests(req.user);
+    res.json(requests);
+  })
+);
+
+router.post(
+  "/attendance/adjustments",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const request = await submitMissedPunchRequest(req.user, {
+      workDate: req.body.workDate,
+      missingAction: req.body.missingAction,
+      requestedTime: req.body.requestedTime,
+      reason: req.body.reason
+    });
+    res.status(201).json(request);
+  })
+);
+
+router.post(
+  "/attendance/adjustments/:requestId/decision",
+  authenticate,
+  authorize("manager", "admin"),
+  asyncHandler(async (req, res) => {
+    const action = req.body.action;
+
+    if (!action) {
+      throw badRequest("Decision action is required");
+    }
+
+    const request = await decideMissedPunchRequest(
+      req.user,
+      req.params.requestId,
+      action,
+      req.body.comment
+    );
+    res.json(request);
   })
 );
 

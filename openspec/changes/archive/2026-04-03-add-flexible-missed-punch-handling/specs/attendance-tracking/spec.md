@@ -1,19 +1,4 @@
-## Purpose
-
-Define how attendance is recorded, summarized by day, evaluated against work hours, and presented to employees and supervisors.
-
-## ADDED Requirements
-
-### Requirement: Employee can clock in and clock out
-The system SHALL allow an authenticated employee to record the start and end of a working day.
-
-#### Scenario: Employee clocks in
-- **WHEN** an authenticated employee submits a clock-in action during the workday
-- **THEN** the system records a timestamped attendance entry associated with that employee
-
-#### Scenario: Employee clocks out
-- **WHEN** an authenticated employee with an active workday submits a clock-out action
-- **THEN** the system records a timestamped clock-out entry associated with that employee
+## MODIFIED Requirements
 
 ### Requirement: Daily attendance uses first clock-in and last clock-out
 The system SHALL treat the first clock-in of the day and the last clock-out of the day as the default effective attendance bounds for that workday, and SHALL allow approved missed punch adjustments to replace a missing or invalid effective bound without altering the raw attendance events.
@@ -33,13 +18,6 @@ The system SHALL treat the first clock-in of the day and the last clock-out of t
 #### Scenario: Approved adjustment fills a missing clock-out
 - **WHEN** a workday has no raw clock-out record and the employee receives an approved replacement clock-out time
 - **THEN** the system uses the approved replacement time as the effective end time for summaries and rule evaluation
-
-### Requirement: Administrator configures standard work time window
-The system SHALL allow an administrator to define the expected start and end times used for attendance evaluation.
-
-#### Scenario: Administrator updates work hours
-- **WHEN** an administrator saves a new standard work start time and end time
-- **THEN** the system stores the updated attendance policy for future clock-in evaluation
 
 ### Requirement: System flags late clock-in against configured start time
 The system SHALL compare the effective clock-in time with the configured work start time and indicate when the employee is late, regardless of whether the effective clock-in comes from a raw punch or an approved adjustment.
@@ -66,10 +44,3 @@ The system SHALL let employees and authorized managers review attendance history
 #### Scenario: Manager views subordinate attendance history
 - **WHEN** an authenticated manager requests attendance history for a direct report
 - **THEN** the system returns attendance records for that subordinate with effective bounds and missed punch status for each workday
-
-### Requirement: Invalid attendance transitions are prevented
-The system SHALL reject clock actions that violate the minimum attendance requirements for a workday.
-
-#### Scenario: Clock-out without same-day clock-in is rejected
-- **WHEN** an employee submits a clock-out without any clock-in record on the same day
-- **THEN** the system rejects the action and reports that the employee must clock in first

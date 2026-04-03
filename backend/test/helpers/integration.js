@@ -86,20 +86,59 @@ export async function seedLeaveBalance(userId, leaveType, balanceHours) {
   );
 }
 
+export async function seedAttendanceRecord(userId, action, occurredAt, note = null) {
+  const result = await pool.query(
+    `
+      INSERT INTO attendance_records (user_id, action, occurred_at, note)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `,
+    [userId, action, occurredAt, note]
+  );
+
+  return result.rows[0];
+}
+
 export async function resetTestData() {
+  async function resetAttendancePolicy() {
+    try {
+      await pool.query(
+        `
+          UPDATE attendance_policy
+          SET
+            work_start_time = '09:00',
+            work_end_time = '18:00',
+            grace_minutes = 0,
+            missed_punch_submission_days = 3,
+            missed_punch_requires_approval = TRUE,
+            missed_punch_auto_approve_quota = 1,
+            missed_punch_allow_admin_override = TRUE,
+            updated_at = NOW()
+          WHERE id = TRUE
+        `
+      );
+    } catch (error) {
+      if (error.code !== "42703") {
+        throw error;
+      }
+
+      await pool.query(
+        `
+          UPDATE attendance_policy
+          SET work_start_time = '09:00', work_end_time = '18:00', grace_minutes = 0, updated_at = NOW()
+          WHERE id = TRUE
+        `
+      );
+    }
+  }
+
   const userResult = await pool.query(
     "SELECT id FROM users WHERE email LIKE 'test-%@example.com'"
   );
   const userIds = userResult.rows.map((row) => row.id);
 
   if (userIds.length === 0) {
-    await pool.query(
-      `
-        UPDATE attendance_policy
-        SET work_start_time = '09:00', work_end_time = '18:00', grace_minutes = 0, updated_at = NOW()
-        WHERE id = TRUE
-      `
-    );
+    await resetAttendancePolicy();
     return;
   }
 
@@ -111,10 +150,15 @@ export async function resetTestData() {
     "SELECT id FROM overtime_requests WHERE user_id = ANY($1::uuid[]) OR approver_user_id = ANY($1::uuid[])",
     [userIds]
   );
+  const missedPunchResult = await pool.query(
+    "SELECT id FROM missed_punch_requests WHERE user_id = ANY($1::uuid[]) OR approver_user_id = ANY($1::uuid[]) OR reviewer_user_id = ANY($1::uuid[])",
+    [userIds]
+  );
 
   const leaveIds = leaveResult.rows.map((row) => row.id);
   const overtimeIds = overtimeResult.rows.map((row) => row.id);
-  const requestIds = [...leaveIds, ...overtimeIds];
+  const missedPunchIds = missedPunchResult.rows.map((row) => row.id);
+  const requestIds = [...leaveIds, ...overtimeIds, ...missedPunchIds];
 
   if (requestIds.length > 0) {
     await pool.query(
@@ -126,6 +170,10 @@ export async function resetTestData() {
   await pool.query("DELETE FROM email_logs WHERE user_id = ANY($1::uuid[])", [userIds]);
   await pool.query("DELETE FROM setup_tokens WHERE user_id = ANY($1::uuid[])", [userIds]);
   await pool.query("DELETE FROM leave_balances WHERE user_id = ANY($1::uuid[])", [userIds]);
+  await pool.query(
+    "DELETE FROM missed_punch_requests WHERE user_id = ANY($1::uuid[]) OR approver_user_id = ANY($1::uuid[]) OR reviewer_user_id = ANY($1::uuid[])",
+    [userIds]
+  );
   await pool.query("DELETE FROM attendance_records WHERE user_id = ANY($1::uuid[])", [userIds]);
   await pool.query(
     "DELETE FROM leave_requests WHERE user_id = ANY($1::uuid[]) OR approver_user_id = ANY($1::uuid[])",
@@ -136,13 +184,7 @@ export async function resetTestData() {
     [userIds]
   );
   await pool.query("DELETE FROM users WHERE id = ANY($1::uuid[])", [userIds]);
-  await pool.query(
-    `
-      UPDATE attendance_policy
-      SET work_start_time = '09:00', work_end_time = '18:00', grace_minutes = 0, updated_at = NOW()
-      WHERE id = TRUE
-    `
-  );
+  await resetAttendancePolicy();
 }
 
 export async function closeTestPool() {
